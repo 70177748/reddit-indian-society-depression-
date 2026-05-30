@@ -23,13 +23,18 @@ st.markdown("""
 
 def assign_topic(text):
     text = str(text).lower()
-    if any(w in text for w in ['exam', 'jee', 'neet', 'iit', 'college', 'study', 'fail', 'marks', 'career', 'coaching', 'student']):
+    w1 = ['exam', 'jee', 'neet', 'iit', 'college', 'study', 'fail', 'marks', 'career', 'coaching', 'student']
+    w2 = ['parents', 'family', 'marriage', 'father', 'mother', 'relatives', 'breakup', 'love', 'toxic', 'divorce']
+    w3 = ['job', 'salary', 'company', 'manager', 'money', 'wfh', 'layoff', 'office', 'earn', 'corporate']
+    w4 = ['lonely', 'alone', 'friend', 'no one', 'isolated', 'cry', 'sad', 'suicidal', 'hopeless']
+    
+    if any(w in text for w in w1):
         return 'Academic & Career Stress'
-    elif any(w in text for w in ['parents', 'family', 'marriage', 'father', 'mother', 'relatives', 'breakup', 'love', 'toxic', 'divorce']):
+    elif any(w in text for w in w2):
         return 'Family & Relationships'
-    elif any(w in text for w in ['job', 'salary', 'company', 'manager', 'money', 'wfh', 'layoff', 'office', 'earn', 'corporate']):
+    elif any(w in text for w in w3):
         return 'Corporate & Financial Anxiety'
-    elif any(w in text for w in ['lonely', 'alone', 'friend', 'no one', 'isolated', 'cry', 'sad', 'suicidal', 'hopeless']):
+    elif any(w in text for w in w4):
         return 'Loneliness & Social Isolation'
     else:
         return 'General Distress / Misunderstood'
@@ -40,7 +45,8 @@ def assign_topic(text):
 @st.cache_data
 def load_and_preprocess_core_data():
     target_file = None
-    for f in ["depression_indian_society.csv", "cleaned_depression_data.csv", "depression_inndian_society.csv"]:
+    files_to_check = ["depression_indian_society.csv", "cleaned_depression_data.csv", "depression_inndian_society.csv"]
+    for f in files_to_check:
         if pd.io.common.file_exists(f):
             target_file = f
             break
@@ -53,4 +59,11 @@ def load_and_preprocess_core_data():
                 cleaned_col = col.lower().strip()
                 if cleaned_col in ['ups', 'score', 'upvotes', 'points']:
                     col_mapping[col] = 'ups'
-                elif cleaned_col in
+                elif cleaned_col in ['num_comments', 'comments', 'total_comments', 'num_comment']:
+                    col_mapping[col] = 'num_comments'
+                elif cleaned_col in ['text', 'selftext', 'body', 'post', 'title']:
+                    if 'text' not in col_mapping.values():
+                        col_mapping[col] = 'text'
+            df = df.rename(columns=col_mapping)
+        except Exception:
+            df = pd.DataFrame()
