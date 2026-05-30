@@ -275,9 +275,23 @@ else:
         st.plotly_chart(fig10, use_container_width=True)
 
 # --------------------------------------------------------------------------
-# TAB 4: DATAFRAME VIEW
+# TAB 4: DATAFRAME VIEW (PHASE III - MASTER DATA INSPECTOR)
 # --------------------------------------------------------------------------
 with t_dataframe:
     st.subheader("🔍 Complete Multi-Linked Master Database Inspection Ledger")
     display_columns = ['assigned_topic', 'text_clean', 'sentiment_category', 'sentiment_score', 'ups', 'num_comments', 'engagement_rate', 'user_age']
     st.dataframe(filtered_df[display_columns].reset_index(drop=True), use_container_width=True, height=500)
+
+# ==============================================================================
+# 5. BOTTOM MASTER REGISTRY DATATABLE SECTION (PERMANENTLY AT THE BOTTOM)
+# ==============================================================================
+st.write("---")
+st.header("🗂️ Live Repository Raw Data Explorer")
+st.markdown("Yeh section aapke select kiye hue filters ke mutabik dataset ke rows ko directly tabular form mein page ke end par show karta hai.")
+
+# Clean responsive representation
+st.dataframe(
+    filtered_df[['assigned_topic', 'text_clean', 'sentiment_category', 'sentiment_score', 'user_age', 'ups', 'num_comments']], 
+    use_container_width=True, 
+    height=400
+)
