@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import plotly.express as px
+import plotly.figure_factory as ff
 import os
 
 # ==============================================================================
@@ -11,10 +10,7 @@ import os
 # ==============================================================================
 st.set_page_config(page_title="Indian Society Mental Health Analytics Ecosystem", layout="wide")
 
-# Prevent Matplotlib runtime warning states safely
-plt.rcParams.update({'figure.max_open_warning': 0, 'text.color': '#E2E8F0', 'axes.labelcolor': '#94A3B8'})
-
-# Custom CSS targeting chart layers to force flawless scrolling interaction
+# Custom CSS to force safe web interaction and flawless dark dashboard layout
 st.markdown("""
     <style>
     .stApp { background-color: #0A0C14; color: #E2E8F0; }
@@ -24,16 +20,10 @@ st.markdown("""
     .stTabs [aria-selected="true"] { color: #00E5FF !important; border-bottom-color: #00E5FF !important; }
     .dataframe { background-color: #111827 !important; color: #F9FAFB !important; border: 1px solid #374151; }
     h1, h2, h3 { font-family: 'Inter', sans-serif; font-weight: 700 !important; }
-    
-    /* Disables mouse capture blocking on static charts to guarantee fluid scrolling */
-    div[data-testid="stSubheader"] + div, div[data-testid="stImage"] {
-        pointer-events: auto !important;
-        touch-action: pan-y !important;
-    }
     </style>
 """, unsafe_allow_html=True)
 
-# Clean, matrix-mapped domain assignment avoiding syntax nesting bugs
+# Domain mapping structure preventing data type conversion errors
 def categorize_ten_domains(text):
     text = str(text).lower()
     if any(w in text for w in ['jee', 'neet', 'iit', 'marks', 'rank', 'coaching', 'kota', 'fail', 'exam', 'boards']):
@@ -59,7 +49,7 @@ def categorize_ten_domains(text):
     return 'General Psychological Distress'
 
 # ==============================================================================
-# 2. DATA PIPELINE SYNTAX SAFETY ASSURED
+# 2. DATA PIPELINE VIA CLEAN INTEGRATION
 # ==============================================================================
 @st.cache_data
 def load_and_scale_deep_dataset():
@@ -160,7 +150,7 @@ if search_query:
     filtered_df = filtered_df[filtered_df['text_clean'].str.contains(search_query, case=False, na=False)]
 
 # ==============================================================================
-# 4. KPI ARCHITECTURE OVERVIEW
+# 4. KPI SYSTEM OVERVIEW
 # ==============================================================================
 st.title("🏛️ Reddit Insights: Depression in Indian Society")
 st.markdown("**Course Project Track:** Exploratory Data Analysis | **Instructor:** Ali Hassan Sherazi | **Deploy Status:** Verified Stable")
@@ -180,13 +170,13 @@ else:
 
     t_plotly, t_stat_a, t_stat_b, t_dataframe = st.tabs([
         "📊 Phase I: Interactive Macro Insights (Plotly 1-4)",
-        "📈 Phase II-A: Core Statistical Architectures (Seaborn 5-7)",
-        "📉 Phase II-B: Advanced Demographics Systems (Seaborn 8-10)",
+        "📈 Phase II-A: Core Interactive Architectures (Plotly 5-7)",
+        "📉 Phase II-B: Advanced Fluid Distributions (Plotly 8-10)",
         "🔍 Phase III: Complete Registry Inspector"
     ])
 
     # --------------------------------------------------------------------------
-    # TAB 1: PLOTLY SECTIONS
+    # TAB 1: PLOTLY SECTIONS (1 TO 4)
     # --------------------------------------------------------------------------
     with t_plotly:
         col1, col2 = st.columns(2)
@@ -223,96 +213,73 @@ else:
             st.plotly_chart(fig4, use_container_width=True)
 
     # --------------------------------------------------------------------------
-    # TAB 2: SEABORN CHARTS GRID A (5 TO 7) - CONTAINERIZED FOR FLUID SCROLLING
+    # TAB 2: CONVERTED PLOTLY INTERACTIVE CHARTS (5 TO 7) - NO FREEZING ANYMORE
     # --------------------------------------------------------------------------
     with t_stat_a:
-        plt.style.use('dark_background')
         sc1, sc2 = st.columns(2)
         
         with sc1:
             st.subheader("5. Emotional Dispersion Variance Bounds (Box Plot)")
-            fig, ax = plt.subplots(figsize=(6, 4.5))
-            sns.boxplot(data=filtered_df, x='sentiment_score', y='assigned_topic', ax=ax, palette='Set3', hue='assigned_topic', legend=False)
-            ax.set_title("VADER Value Metrics Across 10 Strategic Domains", color='#00E5FF', fontsize=10)
-            fig.patch.set_facecolor('#0A0C14')
-            ax.set_facecolor('#111827')
-            ax.tick_params(labelsize=8)
-            st.pyplot(fig, use_container_width=True)
-            plt.close()
+            fig5 = px.box(filtered_df, x='sentiment_score', y='assigned_topic', color='assigned_topic',
+                          color_discrete_sequence=px.colors.qualitative.Pastel)
+            fig5.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
+                               showlegend=False, title="VADER Value Metrics Across 10 Strategic Domains")
+            st.plotly_chart(fig5, use_container_width=True)
 
         with sc2:
             st.subheader("6. Bivariate Demographic Scale Layout (Scatter)")
-            fig, ax = plt.subplots(figsize=(6, 4.5))
-            sc = ax.scatter(filtered_df['user_age'], filtered_df['anxiety_index'], c=filtered_df['sentiment_score'], cmap='coolwarm', alpha=0.6, edgecolors='none')
-            ax.set_title("Anxiety Index Patterns Across Demographics Group", color='#00E5FF', fontsize=10)
-            cb = fig.colorbar(sc, ax=ax)
-            cb.ax.tick_params(labelsize=7)
-            fig.patch.set_facecolor('#0A0C14')
-            ax.set_facecolor('#111827')
-            ax.tick_params(labelsize=8)
-            st.pyplot(fig, use_container_width=True)
-            plt.close()
+            fig6 = px.scatter(filtered_df, x='user_age', y='anxiety_index', color='sentiment_score',
+                              color_continuous_scale='coolwarm', opacity=0.7)
+            fig6.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                               title="Anxiety Index Patterns Across Demographics Group")
+            st.plotly_chart(fig6, use_container_width=True)
 
         st.write("---")
-        st.subheader("7. Grid Coefficient Linear Alignment (Heatmap)")
-        fig, ax = plt.subplots(figsize=(10, 4))
-        corr_matrix = filtered_df[['ups', 'num_comments', 'engagement_rate', 'user_age', 'sentiment_score', 'anxiety_index']].corr()
-        sns.heatmap(corr_matrix, annot=True, cmap='mako', fmt=".2f", ax=ax, annot_kws={"size": 9})
-        ax.set_title("Feature Linear Correlation Coefficients Configuration Matrix Grid", color='#00E5FF', fontsize=10)
-        fig.patch.set_facecolor('#0A0C14')
-        ax.tick_params(labelsize=8)
-        st.pyplot(fig, use_container_width=True)
-        plt.close()
+        st.subheader("7. Grid Coefficient Linear Alignment (Heatmap Matrix)")
+        
+        corr_cols = ['ups', 'num_comments', 'engagement_rate', 'user_age', 'sentiment_score', 'anxiety_index']
+        corr_matrix = filtered_df[corr_cols].corr().round(2).values
+        
+        fig7 = px.imshow(corr_matrix, x=corr_cols, y=corr_cols, text_auto=True, color_continuous_scale='mako')
+        fig7.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                           title="Feature Linear Correlation Coefficients Configuration Matrix Grid")
+        st.plotly_chart(fig7, use_container_width=True)
 
     # --------------------------------------------------------------------------
-    # TAB 3: SEABORN CHARTS GRID B (8 TO 10) - CRITICAL SCROLL SAFETY VALIDATED
+    # TAB 3: CONVERTED PLOTLY INTERACTIVE CHARTS (8 TO 10) - FULL RESPONSIVE
     # --------------------------------------------------------------------------
     with t_stat_b:
-        plt.style.use('dark_background')
         sc3, sc4 = st.columns(2)
         
         with sc3:
             st.subheader("8. Density Estimation Performance Indices (Violin Plot)")
-            fig, ax = plt.subplots(figsize=(6, 4.5))
-            sns.violinplot(data=filtered_df, x='sentiment_category', y='anxiety_index', ax=ax, palette='pastel', hue='sentiment_category', legend=False)
-            ax.set_title("Probability Densities of Filtered 5 Emotional Cohorts", color='#00E5FF', fontsize=10)
-            plt.xticks(rotation=15, ha='right')
-            fig.patch.set_facecolor('#0A0C14')
-            ax.set_facecolor('#111827')
-            ax.tick_params(labelsize=8)
-            st.pyplot(fig, use_container_width=True)
-            plt.close()
+            fig8 = px.violin(filtered_df, x='sentiment_category', y='anxiety_index', color='sentiment_category',
+                             box=True, points="all", color_discrete_sequence=px.colors.qualitative.Pastel)
+            fig8.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                               showlegend=False, title="Probability Densities of Filtered 5 Emotional Cohorts")
+            st.plotly_chart(fig8, use_container_width=True)
 
         with sc4:
             st.subheader("9. Mean Engagement Waveform Trendline (Line Chart)")
-            fig, ax = plt.subplots(figsize=(6, 4.5))
             line_data = filtered_df.groupby('hour')['engagement_rate'].mean().reset_index()
-            ax.plot(line_data['hour'], line_data['engagement_rate'], color='#00E5FF', marker='o', linewidth=2, markersize=4)
-            ax.set_title("Hourly Community Engagement Matrix Performance Line", color='#00E5FF', fontsize=10)
-            ax.grid(True, linestyle=':', alpha=0.3)
-            fig.patch.set_facecolor('#0A0C14')
-            ax.set_facecolor('#111827')
-            ax.tick_params(labelsize=8)
-            st.pyplot(fig, use_container_width=True)
-            plt.close()
+            fig9 = px.line(line_data, x='hour', y='engagement_rate', markers=True,
+                           color_discrete_sequence=['#00E5FF'])
+            fig9.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                               title="Hourly Community Engagement Matrix Performance Line")
+            st.plotly_chart(fig9, use_container_width=True)
 
         st.write("---")
-        st.subheader("10. Absolute Population Volume Tracker (Count Plot)")
-        fig, ax = plt.subplots(figsize=(10, 5))
-        sns.countplot(data=filtered_df, x='assigned_topic', palette='flare', ax=ax, hue='assigned_topic', legend=False)
-        ax.set_title("Absolute Entry Frequencies Enforced Across 10 Strategic Domain Spaces", color='#00E5FF', fontsize=11)
-        plt.xticks(rotation=20, ha='right')
-        fig.patch.set_facecolor('#0A0C14')
-        ax.set_facecolor('#111827')
-        ax.tick_params(labelsize=8)
-        
-        fig.tight_layout()
-        st.pyplot(fig, use_container_width=True)
-        plt.close()
+        st.subheader("10. Absolute Population Volume Tracker (Bar-Count Plot)")
+        count_data = filtered_df['assigned_topic'].value_counts().reset_index()
+        fig10 = px.bar(count_data, x='assigned_topic', y='count', color='assigned_topic',
+                       color_discrete_sequence=px.colors.sequential.Flare)
+        fig10.update_layout(template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                            showlegend=False, title="Absolute Entry Frequencies Enforced Across 10 Strategic Domain Spaces")
+        st.plotly_chart(fig10, use_container_width=True)
 
 # --------------------------------------------------------------------------
-# TAB 4: COMPLETE HIGH-VOLUME REGISTER INSPECTOR DATAFRAME VIEW
-# --------------------------------==========================================
+# TAB 4: DATAFRAME VIEW
+# --------------------------------------------------------------------------
 with t_dataframe:
     st.subheader("🔍 Complete Multi-Linked Master Database Inspection Ledger")
     display_columns = ['assigned_topic', 'text_clean', 'sentiment_category', 'sentiment_score', 'ups', 'num_comments', 'engagement_rate', 'user_age']
