@@ -1,0 +1,21 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv
+venv
+ENV
+env
+
+# Streamlit local configs
+.streamlit/
+
+# Large data files (To prevent GitHub slow down)
+*.csv
+*.xlsx
+
+# Operating System files
+.DS_Store
+Thumbs.db
