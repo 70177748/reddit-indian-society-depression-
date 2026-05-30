@@ -1,6 +1,6 @@
 streamlit==1.35.0
 pandas==2.2.2
-matplotlib
-seaborn
-plotly
-wordcloud
+numpy==1.26.4
+matplotlib==3.10.9
+seaborn==0.13.2
+plotly==6.7.0
