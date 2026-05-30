@@ -4,8 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
-from wordcloud import WordCloud
-import time
 
 # ==============================================================================
 # 1. PAGE CONFIGURATION & THEME
@@ -37,7 +35,7 @@ def assign_topic(text):
         return 'General Distress / Misunderstood'
 
 # ==============================================================================
-# 2. ADVANCED BULLETPROOF DATA LOADING PIPELINE (HANDLES PARSER ERRORS)
+# 2. ADVANCED DATA LOADING PIPELINE (PARSER & KEYERROR SAFE)
 # ==============================================================================
 @st.cache_data
 def load_and_preprocess_core_data():
@@ -49,16 +47,13 @@ def load_and_preprocess_core_data():
             
     if target_file:
         try:
-            # Safe parsing parameters explicitly added to solve ParserError
             df = pd.read_csv(
                 target_file, 
-                on_bad_lines='skip',   # Auto skips corrupted/broken lines instead of crashing
-                engine='python',       # Flexible fallback engine for text formatting
-                encoding='utf-8',      # Standard safe string encoder
-                escapechar='\\'        # Handles unescaped quotes in reddit comments
+                on_bad_lines='skip', 
+                engine='python', 
+                encoding='utf-8', 
+                escapechar='\\'
             )
-            
-            # Column mapping logic to resolve KeyErrors dynamically
             col_mapping = {}
             for col in df.columns:
                 cleaned_col = col.lower().strip()
@@ -69,21 +64,18 @@ def load_and_preprocess_core_data():
                 elif cleaned_col in ['text', 'selftext', 'body', 'post', 'title']:
                     if 'text' not in col_mapping.values():
                         col_mapping[col] = 'text'
-            
             df = df.rename(columns=col_mapping)
         except Exception:
-            # If the CSV is extremely broken, trigger fallback data gracefully
             df = pd.DataFrame()
     else:
         df = pd.DataFrame()
 
-    # If variables are missing, auto-generate safely to satisfy production pipeline
     if df.empty or 'text' not in df.columns:
         sample_posts = [
             "Extremely stressed due to upcoming JEE exams. Parents expect IIT but mock marks are terrible.",
             "My corporate manager at the IT firm is toxic. 14 hours everyday, delayed salary.",
             "I am completely lonely in Bangalore. No friends to talk to. Crying in my room alone.",
-            "Failed my NEET exam for the second time. Can't face relatives. Comparison with Sharma ji's son is killing me.",
+            "Failed my NEET exam for the second time. Can't face relatives. Comparison with Sharma ji is killing me.",
             "Had a massive breakdown due to corporate pressure and financial bills.",
             "Going through a devastating breakup. Parents are forcing marriage."
         ]
@@ -95,21 +87,4 @@ def load_and_preprocess_core_data():
         })
 
     if 'ups' not in df.columns:
-        df['ups'] = np.random.randint(10, 500, size=len(df))
-    if 'num_comments' not in df.columns:
-        df['num_comments'] = np.random.randint(5, 100, size=len(df))
-    if 'user_age' not in df.columns:
-        df['user_age'] = np.random.randint(18, 45, size=len(df))
-
-    # Apply data transformations safely
-    df['cleaned_text'] = df['text'].fillna("").astype(str)
-    df['assigned_topic'] = df['cleaned_text'].apply(assign_topic)
-    
-    if 'sentiment_score' not in df.columns:
-        df['sentiment_score'] = np.random.uniform(-0.95, 0.15, size=len(df))
-        
-    df['sentiment_category'] = df['sentiment_score'].apply(
-        lambda x: 'Severely Distressed' if x <= -0.45 else ('Mildly Negative' if x < 0 else 'Seeking Help / Hopeful')
-    )
-    
-    df['engagement_rate'] = df['ups'].fillna(0).astype(int) + df['num_comments'].fillna(0
+        df['ups'] = np.random.randint(10,
