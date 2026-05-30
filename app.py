@@ -14,7 +14,7 @@ st.set_page_config(page_title="Indian Society Mental Health Analytics Ecosystem"
 # Prevent Matplotlib runtime warning states safely
 plt.rcParams.update({'figure.max_open_warning': 0, 'text.color': '#E2E8F0', 'axes.labelcolor': '#94A3B8'})
 
-# Custom CSS to force safe pointer events over charts (Fixes the scrolling lock)
+# Custom CSS targeting chart layers to force flawless scrolling interaction
 st.markdown("""
     <style>
     .stApp { background-color: #0A0C14; color: #E2E8F0; }
@@ -25,19 +25,23 @@ st.markdown("""
     .dataframe { background-color: #111827 !important; color: #F9FAFB !important; border: 1px solid #374151; }
     h1, h2, h3 { font-family: 'Inter', sans-serif; font-weight: 700 !important; }
     
-    /* Crucial fix: Allows natural page scrolling over static charts */
-    div[data-testid="stSubheader"] + div {
+    /* Disables mouse capture blocking on static charts to guarantee fluid scrolling */
+    div[data-testid="stSubheader"] + div, div[data-testid="stImage"] {
         pointer-events: auto !important;
+        touch-action: pan-y !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
+# Clean, matrix-mapped domain assignment avoiding syntax nesting bugs
 def categorize_ten_domains(text):
     text = str(text).lower()
     if any(w in text for w in ['jee', 'neet', 'iit', 'marks', 'rank', 'coaching', 'kota', 'fail', 'exam', 'boards']):
         return 'Academic & Competitive Pressure'
-    elif any(w in text for w in ['corporate', 'manager', 'wfh', 'layoff', 'salary', 'office', 'job', 'work', 'deadline']):
+    if any(w in text for w in ['corporate', 'manager', 'wfh', 'layoff', 'salary', 'office', 'job', 'work', 'deadline']):
         return 'Corporate Burnout & Grind Culture'
-    elif any(w in text for w in ['parents', 'marriage', 'relatives', 'sharma ji', 'taunt', 'rishta', 'family']):
+    if any(w in text for w in ['parents', 'marriage', 'relatives', 'sharma ji', 'taunt', 'rishta', 'family']):
         return 'Family Expectations & Social Stigma'
-    elif any(w in text for w in
+    if any(w in text for w in ['lonely', 'alone', 'isolation', 'flat', 'bangalore', 'mumbai', 'no friends', 'pg']):
+        return 'Urban Loneliness & Metro Isolation'
+    if any(w in text for w
