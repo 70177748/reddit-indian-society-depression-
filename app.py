@@ -1,4 +1,4 @@
-vimport streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,11 +7,11 @@ import plotly.express as px
 import os
 
 # ==============================================================================
-# 1. ENTERPRISE GLOBAL THEME & RENDERING SAFETY RULES
+# 1. GLOBAL THEME SETTINGS & PERFORMANCE OPTIMIZATION
 # ==============================================================================
 st.set_page_config(page_title="Indian Society Mental Health Analytics Ecosystem", layout="wide")
 
-# Prevent Matplotlib runtime font caching or context display slowing down live rendering
+# Prevent Matplotlib context warning issues during heavy dynamic loop re-runs
 plt.rcParams.update({'figure.max_open_warning': 0, 'text.color': '#E2E8F0', 'axes.labelcolor': '#94A3B8'})
 
 st.markdown("""
@@ -26,13 +26,21 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Advanced Semantic Engine to map text arrays into 8 highly specified socio-cultural domains
+# 8 Strategic Societal Domains Category Decoder
 def categorize_eight_domains(text):
     text = str(text).lower()
-    if any(w in text for w in ['jee', 'neet', 'iit', 'marks', 'rank', 'coaching', 'kota', 'fail', 'exam', 'boards', 'professor']):
+    if any(w in text for w in ['jee', 'neet', 'iit', 'marks', 'rank', 'coaching', 'kota', 'fail', 'exam', 'boards', 'college']):
         return 'Academic & Competitive Pressure'
-    elif any(w in text for w in ['corporate', 'manager', 'wfh', 'layoff', 'salary', 'office', 'job', 'work', 'appraisal', 'deadline', 'hustle']):
+    elif any(w in text for w in ['corporate', 'manager', 'wfh', 'layoff', 'salary', 'office', 'job', 'work', 'appraisal', 'deadline']):
         return 'Corporate Burnout & Grind Culture'
-    elif any(w in text for w in ['parents', 'marriage', 'relatives', 'sharma ji', 'taunt', 'rishta', 'family', 'father', 'mother', 'brother']):
+    elif any(w in text for w in ['parents', 'marriage', 'relatives', 'sharma ji', 'taunt', 'rishta', 'family', 'father', 'mother']):
         return 'Family Expectations & Social Stigma'
+    elif any(w in text for w in ['lonely', 'alone', 'isolation', 'flat', 'bangalore', 'mumbai', 'gurgaon', 'no friends', 'pg']):
+        return 'Urban Loneliness & Metro Isolation'
+    elif any(w in text for w in ['unemployed', 'recession', 'money', 'rent', 'loan', 'debt', 'emi', 'broke', 'financial']):
+        return 'Financial Anxiety & Economic Crisis'
+    elif any(w in text for w in ['breakup', 'cheated', 'divorce', 'relationship', 'ex', 'toxic partner', 'love', 'heartbroken']):
+        return 'Relationship Friction & Heartbreak'
+    elif any(w in text for w in ['social media', 'instagram', 'fomo', 'reels', 'comparisons', 'likes', 'addiction', 'screen time']):
+        return 'Digital Dysmorphia & Cyber Fatigue'
     elif any(w in text for w in
